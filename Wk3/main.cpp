@@ -1,4 +1,5 @@
 #include <iostream>
+
 using namespace std;
 
 
@@ -118,6 +119,21 @@ void filterOdd() {
 }
 
 
+void isOldEnough() {
+	// Write a program using error handling to check if the user is over 18
+	int age;
+	cout << "How old are you?: ";
+	cin >> age;
+	try {  // Try this block of code
+		if (age >= 18)
+			cout << "You are over 18, come in!";
+		else
+			throw(age);  // Raise error
+	}
+	catch (int age) { cout << "You are only " << age << " years old, goodbye!"; }  // Catch error
+}
+
+
 int main() {
 	enum class ESelection {
 		eNone,
@@ -126,9 +142,12 @@ int main() {
 		eSquare,
 		eCalculator,
 		eReverseArray,
-		eFilterOdd
+		eFilterOdd,
+		eIsOldEnough,
+		eQuit
 	};
-	int userInput;
+	int userInput{ 0 };
+	ESelection userSelection{ ESelection::eNone };
 	do {
 		cout << "******** Main Menu ********" << endl << endl  // Output options
 			<< "1. Loop Array" << endl
@@ -137,13 +156,14 @@ int main() {
 			<< "4. Calculator" << endl
 			<< "5. Reverse Array" << endl
 			<< "6. Filter Odd Numbers" << endl
-			<< "7. Quit" << endl << endl
+			<< "7. Is Old Enough" << endl
+			<< "8. Quit" << endl << endl
 			<< "Your choice: ";
 		cin >> userInput;
 
 		system("cls");  // Clear screen
 
-		ESelection userSelection{ static_cast<ESelection>(userInput) };  // Convert to enum
+		userSelection = static_cast<ESelection>(userInput);  // Cast input to enum
 
 		switch (userSelection) {  // Enum responses
 		case ESelection::eLoopArray:
@@ -170,16 +190,25 @@ int main() {
 			cout << "******** Filter Odd *******" << endl << endl;
 			filterOdd();
 			break;
-		default:
-			userInput = 7;  // Quit
+		case ESelection::eIsOldEnough:
+			cout << "******* Is Old Enough *****" << endl << endl;
+			isOldEnough();
+			break;
+		case ESelection::eQuit:  // Quit
+			break;
+		default:  // Any other invalid option
+			userSelection = ESelection::eNone;
+			cout << "ERR: That option is not available!" << endl;
 		}
-
+		
 		char temp = getchar();  // Clear input queue
-		cout << endl << endl << "Press Enter to return to main menu." << endl;
-		while (getchar()!='\n');  // Wait for user to press enter
-		system("cls");  // Clear screen
+		if (userSelection != ESelection::eQuit) {
+			cout << endl << endl << "Press Enter to return to main menu." << endl;
+			while (getchar() != '\n');  // Wait for user to press enter
+			system("cls");  // Clear screen
+		}
 	
-	} while (userInput != 7);
+	} while (userSelection != ESelection::eQuit);
 
 	return 0;
 }
